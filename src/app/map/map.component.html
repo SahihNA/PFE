@@ -1,0 +1,71 @@
+<div class="jumbtron">
+<div style="background-color:darkslategray;">
+  <div  style=" margin-left: 500px;  " class="dropdown">
+    <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Indicateur----
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+        <div *ngFor="let indic of  list_Nom_Indicateur">
+         
+            <li  ><a (click)="getValeurByNomIndicateur(indic)">{{indic}}</a></li>
+        </div>     
+    </ul>
+  </div>
+
+  <hr>
+</div>
+  <div class="row">
+    <div class="col-md-6">
+      
+     
+      <!--(click)="populateForm(emp)"-->
+    
+    
+    <div id="map">
+       <!-- <section id="side-panel">
+
+            <p>This proportional symbol map shows the relative magnitude of green house gas emissions in CO in 2015 by large facilites. Data are shown by <span style='color: #bd4932; font-weight: bold;'>fuel combustion</span> and <span style='color: #105b63; font-weight: bold;'> process emissions</span>.
+    
+            <h3>Metric tons of GHG</h3>
+            <div id='legend'>
+                <div id="legend-large"></div>
+                <div id="legend-small"></div>
+                <div id="legend-large-label"></div>
+                <div id="legend-small-label"></div>
+            </div>
+            <p>The data are reported to the EPA and available from their <a href="https://ghgdata.epa.gov/ghgp/main.do">FLIGHT</a> web applicaiton.</p>
+            <p>Map authored <a href="https://github.com/rgdonohue">Rich Donohue</a>.</p>
+    
+        </section>-->
+      
+      </div>
+    </div>
+    <div class="col-md-6">
+         <table >
+        <tr style="background: darkolivegreen;">
+          <th>Commune</th>
+          <th>Valeur</th> 
+          <th>Annee</th>
+        </tr>
+        <tr *ngFor="let indic of list_V_byNomIndicateur">
+        <td>[{{indic.commune.nomC}}]</td>
+        <td>[{{indic.valeur}}]</td>
+        <td>[{{indic.annee}}]</td>
+          
+        </tr>
+       
+      </table>
+      <div style="height: 370px; width: 80%;">
+<div style="height: 370px; width: 80%;">
+      <div id="chartContainer" style="height: 370px; width: 80%;"></div>
+    </div> 
+  </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+  
+    
