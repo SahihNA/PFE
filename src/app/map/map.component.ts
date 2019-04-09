@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MapService } from '../shared/map.service';
-import { Chart } from 'angular-highcharts';
-import * as CanvasJS from '../canvasjs.min';
+import * as Chart from 'chart.js';
+import * as $ from 'jquery';
+import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import 'chartjs-plugin-zoom'
 declare let L;
+
+const elements_tableau = [
+];
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -10,13 +15,24 @@ declare let L;
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
-
   
-  chart: Chart;
+  canvas: any;
+  ctx: any;
+  //chart: Chart;
+  circlemarkers;
+  public selectedId:any;
   couleur;
+  dictTable:any[];
+  globaldataChart={};
+  list_nom_communes:any[];
   list_valeur_indicateur: any[];
   list_Nom_Indicateur:any[];
   list_V_byNomIndicateur:any[];
+  indicateurs_choisis=[];
+  dataSource = new MatTableDataSource([]);
+
+  displayedColumns: string[] = [];
+ 
   list:any[];
    myStyle = {
     "color": 'red',
@@ -27,14 +43,20 @@ export class MapComponent implements OnInit {
 map;
 info;
 
+@ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
 
   constructor(private service: MapService) { }
 
   ngOnInit() {
-    
-    
-    
+   
+   
+ 
+   
+    $(window).click(function () {
+      $('#test').css('background-color', 'red');
+      });
 
    // this.drawLegend();
 
@@ -42,10 +64,37 @@ info;
       (res) => {
         this.list_Nom_Indicateur = res;
         console.log(this.list_Nom_Indicateur);
-      },
+      }/*,
       (err) => {
         alert("erreur lors de la get des Noms Indicateur");
-      }
+      }*/
+    );
+
+    this.service. getNomCommunes().subscribe(
+      (res) => {
+        this.list_nom_communes = res;
+        this.list_nom_communes.sort();
+        this.displayedColumns.push('commune');
+       
+        for(var i=0;i<this.list_nom_communes.length;i++){
+          elements_tableau[i]={};
+         
+         elements_tableau[i]["commune"] =this.list_nom_communes[i];
+       // this.dataSource = elements_tableau;
+        this.dataSource = new MatTableDataSource(elements_tableau);
+        this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    
+        }
+       
+      
+        
+       
+       
+      }/*,
+      (err) => {
+        alert("erreur lors de la get des Noms Indicateur");
+      }*/
     );
     
    this.map = L.map('map').setView([32, -7], 5);
@@ -72,38 +121,79 @@ this.infoPut();
     return color;
   }
 
-  putchart(){
-    var databars=[];
-    for (var i = 0; i < this.list_V_byNomIndicateur.length; i++) {
-      databars.push({
-         y:this.list_V_byNomIndicateur[i].valeur, 
-         label: this.list_V_byNomIndicateur[i].commune.nomC
-                });
-
-                
-                ;}
-
-    let chart = new CanvasJS.Chart("chartContainer", {
-      animationEnabled: true,
-      exportEnabled: true,
-      title: {
-        text: "Valeur Indicateur / commune"
+  putchart(data){
+    //var data = [2137680, 6282693, 805566, 2568163, 598599, 3189284, 599112, 926340, 5548295, 11847685, 66445];
+    
+    //for (var i=0;i<1000;i++){data.push(i)}
+    var labels =this.list_nom_communes;
+   // var labels = ["Management", "Finance", "Human Resources", "Business Development and Marketing", "Information Technology", "Professional Development and Training", "Knowledge Management", "Logistics", "Support", "Business Services", "Other"];
+    //var bgColor = ["#878BB6", "#FFEA88", "#FF8153", "#4ACAB4", "#c0504d", "#8064a2", "#772c2a", "#f2ab71", "#2ab881", "#4f81bd", "#2c4d75"];
+    //for (var i=0;i<1000;i++){labels.push(i+'hh')}
+      //var ctx = document.getElementById("myChart");
+      this.canvas = document.getElementById('myChart');
+    this.ctx = this.canvas.getContext('2d');
+    var chart = new Chart(this.ctx, {
+      // The type of chart we want to create
+      type: 'bar',
+      data: {
+          labels: labels,
+          datasets: [
+            {
+              label: data +' par commune',
+              data: this.globaldataChart[data]
+             // backgroundColor: bgColor
+            }]
       },
-      axisX:{
-        interval: 1
+      options: {
+        spanGaps: true,
+        scales: {
+          xAxes: [
+              {
+                  ticks: {
+                      display: false
+                  }
+              }
+          ],
       },
-      
-      
-      data: [{
-        type: "bar",
-		name: "companies",
-		axisYType: "secondary",
-		
-        dataPoints: databars
-      }]
-    });
-      
-    chart.render();
+        plugins: {
+          zoom: {
+            pan: {
+              enabled: true,
+              mode: 'x'
+            },
+            zoom: {
+              enabled: true,
+              mode: 'x'
+            }
+          }
+        },
+       
+    
+
+       
+        
+      hover: {
+  
+        onHover :function(clickEvt,evt) {
+          var h=[];
+          h.push(evt[0]);
+
+          if(h[0]!==undefined){
+            console.log(h[0]._model);
+          console.log(h[0]._model.label);}
+        }
+       
+      },
+    
+      onClick:function(clickEvt,activeElems) {
+       // console.log(activeElems);
+      }
+     
+    }
+  });
+ 
+
+  
    
   }
 
@@ -114,7 +204,8 @@ this.infoPut();
       (res) => {
         this.list_V_byNomIndicateur = res;
         this.populateMap();
-        this.putchart();
+       // this.putchart();
+        this.populateTable();
       },
       (err) => {
         alert("erreur lors de la get des incident");
@@ -151,14 +242,156 @@ this.info.addTo(this.map);
 
   }
 
+  public highlightRow(indic) {
+    this.selectedId = indic.id;
+    this.circlemarkers._layers[indic.id].setStyle({
+      weight: 5,
+      fillColor: "orange",
+      color: 'black',
+      dashArray: '',
+      fillOpacity: 0.7
+    });
+  }
 
+  public disablehighlightRow(indic){
+    this.selectedId = null;
+    this.circlemarkers.resetStyle  (this.circlemarkers._layers[indic.id]);
+    
+    
+  }
+
+  populateTable(){
+
+   
+
+    
+    document.getElementById("solid").style.paddingTop = "0%";
+    document.getElementById("solid").innerHTML = "";
+
+    var labels =this.list_nom_communes;
+    var data = [];
+    var rowInt=[];
+    var valint=[];
+    this.displayedColumns.push(this.list_V_byNomIndicateur[0].indicateur);
+
+    var trow =  $('#myform tr').eq(0);
+    
+    trow.append('<td>'+this.list_V_byNomIndicateur[0].indicateur+'</td>');
+   
+ for (var i = 0; i <this.list_V_byNomIndicateur.length; i++){
+        
+      
+  rowInt.push(this.list_nom_communes.indexOf(this.list_V_byNomIndicateur[i].commune.nomC));
+  valint.push(this.list_V_byNomIndicateur[i].valeur);
+ 
+}
+var u=0;
+for (var j = 0; j <this.list_nom_communes.length; j++){
+  var trow =  $('#myform tr').eq(j+1);
+  if(rowInt.includes(j))
+  {
+
+     
+     
+      elements_tableau[j][this.list_V_byNomIndicateur[0].indicateur] =valint[u];
+     
+ 
+     
+    trow.append(valint[u]);
+    data.push(valint[u]);
+    u++;
+
+  }
+  else{
+    elements_tableau[j][this.list_V_byNomIndicateur[0].indicateur]='Pas de valeur';
+    trow.append('<td> Pas de valeur</td>');
+    data.push(null);
+
+  }
+
+}
+for (var j = 0; j <this.list_nom_communes.length; j++){
+  console.log('elementhere' +elements_tableau[j][this.list_V_byNomIndicateur[0].indicateur]);
+}
+
+this.globaldataChart[this.list_V_byNomIndicateur[0].indicateur] = data;
+
+ // this.globaldataChart.push(d);
+
+  console.log('the map'+ this.globaldataChart[this.list_V_byNomIndicateur[0].indicateur]);
+  this.indicateurs_choisis.push(this.list_V_byNomIndicateur[0].indicateur);
+
+    this.canvas = document.getElementById('myChart');
+        this.ctx = this.canvas.getContext('2d');
+        var chart = new Chart(this.ctx, {
+          // The type of chart we want to create
+          type: 'bar',
+          data: {
+              labels: labels,
+              datasets: [
+                {
+                  label: this.list_V_byNomIndicateur[0].indicateur +' par commune',
+                  data: data
+                 // backgroundColor: bgColor
+                }]
+          },
+          options: {
+            spanGaps: true,
+            scales: {
+              xAxes: [
+                  {
+                      ticks: {
+                          display: false
+                      }
+                  }
+              ],
+          },
+            plugins: {
+              zoom: {
+                pan: {
+                  enabled: true,
+                  mode: 'x'
+                },
+                zoom: {
+                  enabled: true,
+                  mode: 'x'
+                }
+              }
+            },
+           
+   
+          hover: {
+      
+            onHover :function(clickEvt,evt) {
+              var h=[];
+              h.push(evt[0]);
+    
+              if(h[0]!==undefined){
+                console.log(h[0]._model);
+              console.log(h[0]._model.label);}
+            }
+           
+          },
+        
+          onClick:function(clickEvt,activeElems) {
+           // console.log(activeElems);
+          }
+         
+        }
+      });
+     
+    
+      
+   
+
+  }
   populateMap(){
     this.couleur=this.getRandomColor();
   
     var dict = [];
-    var circlemarkers;
+    //var circlemarkers;
 
-  
+    console.log('test'+this.list_V_byNomIndicateur)
     for (var i = 0; i < this.list_V_byNomIndicateur.length; i++) {
       dict.push({
         type:   "Feature",
@@ -166,11 +399,11 @@ this.info.addTo(this.map);
         geometry:{"type": "Point", "coordinates": [this.list_V_byNomIndicateur[i].commune.x,this.list_V_byNomIndicateur[i].commune.y]}
     });}
    
-    console.log(dict);
+    
     this.y(dict);
 var c=this;
-console.log('here'+this);
-    circlemarkers=L.geoJSON(dict, {
+console.log('meee'+dict);
+   this.circlemarkers=L.geoJSON(dict, {
       pointToLayer: function (feature, latlng) {
        
         console.log(feature.properties.valeur);
@@ -191,7 +424,7 @@ console.log('here'+this);
       
         layer.on('mouseover', function (e) {
           
-          console.log(e);
+          console.log(layer);
           layer.setStyle({
             weight: 5,
             fillColor: "orange",
@@ -206,11 +439,12 @@ console.log('here'+this);
          console.log(layer.feature.properties);
           c.info.update(layer.feature.properties);
          
-         console.log('wait'+c.info);
+        
       
           });
           layer.on('mouseout', function (e) {
-            circlemarkers.resetStyle(e.target);
+            console.log('targeeet'+e.target)
+            c.circlemarkers.resetStyle(e.target);
             c.info.update();
             
             });
@@ -227,7 +461,29 @@ console.log('here'+this);
 }
   
   })
-      circlemarkers.addTo(this.map);
+      this.circlemarkers.addTo(this.map);
+     
+     var t=[];
+      for (var p in this.circlemarkers._layers){
+     
+      var m={};
+      m=this.circlemarkers._layers[p].feature.properties;
+      var b={};
+      b['id'] = parseInt(p);
+      ;
+      var food = Object.assign({}, m, b);
+      t.push(food)  ;
+
+     
+      console.log(this.circlemarkers._layers[p].feature.properties);
+     
+     
+      }
+
+      this.dictTable=t;
+      console.log(t);
+      console.log(this.dictTable);
+     
      
 
 

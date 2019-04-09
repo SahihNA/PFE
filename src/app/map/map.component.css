@@ -11,6 +11,13 @@
   z-index: 800;
 }
 
+#solid{
+  padding-left: 50%;
+  padding-top: 30%;
+  background-color: #4CAF50;
+  width:100px;
+}
+
 #legend {
   position: relative;
   margin: 20px 0;
@@ -31,12 +38,17 @@
   left: 66px;
 }
 
+table tr.highlight {
+  background-color: #4CAF50 !important;
+  color: #ffffff;
+}
+
 #map{
     height: 500px;
     width: 100%;
 }
 
-table, th, td {
+table, th, td ,tr {
     border: 1px solid black;
     border-collapse: collapse;
   }
@@ -56,6 +68,12 @@ table, th, td {
   table#t01 th {
     background-color: black;
     color: white;
+  }
+
+ 
+  
+  button {
+    margin: 16px 8px;
   }
 
 

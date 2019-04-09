@@ -1,3 +1,5 @@
+
+
 <div class="jumbtron">
 <div style="background-color:darkslategray;">
   <div  style=" margin-left: 500px;  " class="dropdown">
@@ -13,10 +15,12 @@
 
   <hr>
 </div>
+
+
   <div class="row">
     <div class="col-md-6">
       
-     
+      
       <!--(click)="populateForm(emp)"-->
     
     
@@ -40,20 +44,51 @@
       </div>
     </div>
     <div class="col-md-6">
+
+        
+
+        <div  style=" margin-left: 100px;  " class="dropdown">
+            <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Indicateur----
+            <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <div *ngFor="let indic of  indicateurs_choisis">
+                 
+                    <li  ><a (click)="putchart(indic)">{{indic}}</a></li>
+                </div>     
+            </ul>
+          </div>
+          <p id="solid">No chart to display</p>
+        <canvas id="myChart" ></canvas>
+       
          <table >
         <tr style="background: darkolivegreen;">
           <th>Commune</th>
           <th>Valeur</th> 
           <th>Annee</th>
         </tr>
-        <tr *ngFor="let indic of list_V_byNomIndicateur">
-        <td>[{{indic.commune.nomC}}]</td>
+        <tr *ngFor="let indic of dictTable" (mouseover)="highlightRow(indic)" (mouseout)="disablehighlightRow(indic)"
+        [ngClass] = "{'highlight' : indic.id == selectedId}">
+        <td>{{indic.id}}</td>
         <td>[{{indic.valeur}}]</td>
-        <td>[{{indic.annee}}]</td>
+        <!-- <td>[{{indic.annee}}]</td>-->
           
         </tr>
        
       </table>
+       
+      <!--<table id="myform" >
+        <tr style="background: darkolivegreen;">
+          <th>Commune</th>
+          
+        </tr>
+        <tr *ngFor="let indic of list_nom_communes">
+        <td>{{indic}}</td>
+        
+          
+        </tr>
+       
+      </table>-->
+
       <div style="height: 370px; width: 80%;">
 <div style="height: 370px; width: 80%;">
       <div id="chartContainer" style="height: 370px; width: 80%;"></div>
@@ -63,6 +98,18 @@
     </div>
   </div>
 </div>
+<mat-table [dataSource]="dataSource"  class="mat-elevation-z8" matSort>
+
+    <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element[column]}} </mat-cell>
+    </ng-container>
+  
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+  <mat-paginator [length]="dataSource.length" [pageSize]="10" [pageIndex]="0" [pageSizeOptions]="[3,5,10]" showFirstLastButtons></mat-paginator>
+ 
 
 
 

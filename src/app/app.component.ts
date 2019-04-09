@@ -1,4 +1,9 @@
 import { Component } from '@angular/core';
+const ELEMENT_DATA = [
+  {position: 1, name: 'Hydrogen'},
+  {position: 2, name: 'Helium'},
+  
+];
 
 
 @Component({
@@ -9,7 +14,13 @@ import { Component } from '@angular/core';
    
 })
 export class AppComponent {
+  dataSource=ELEMENT_DATA;
   title = 'client-app';
+  displayedColumns = ['position'];
+
+  addColumn() {
+    
+  }
  
   
 

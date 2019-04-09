@@ -18,6 +18,10 @@ export class MapService {
     return this.http.get<Observable<any>>(this.rootURL + 'Indicateur/NomIndicateur');
   }
 
+  getNomCommunes(): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Valeur/NomCommunes');
+  }
+
   getValeurByNomIndicateur(nom): Observable<any> {
     return this.http.get<Observable<any>>(this.rootURL + 'Valeur/'+nom);
   }
