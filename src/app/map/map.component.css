@@ -11,12 +11,49 @@
   z-index: 800;
 }
 
+.outer {
+  padding-top:10px;
+  background-color:palegreen;
+  width:80px; /* You can define it by % also */
+  height:80px; /* You can define it by % also */
+  position:relative;
+  border:1px solid grey;
+  border-radius: 50%;
+  text-align: bottom;
+  }
+  #header-content {
+    position: absolute;
+    bottom: 60%;
+    left: 25px;
+    font-size: 11px;
+  }
+  .inner {
+  text-align: bottom;
+  background-color:palegreen;
+  top: 50%; left:25%; /* of the container */
+  width:50%; /* of the container */
+  height:50%; /* of the container */
+  position: relative;
+  border:1px solid grey;
+  border-radius: 50%;
+  }
+
+
+
 #solid{
-  padding-left: 50%;
-  padding-top: 30%;
-  background-color: #4CAF50;
+  padding-left: 30%;
+ padding-top: 20%;
+ 
   width:100px;
 }
+#circle{ background: black; width: 20px; height:20px; border-radius: 50%; padding-left: 20px;  }
+
+.menu_legend
+{border-style: outset;
+width :100px;
+
+}
+
 
 #legend {
   position: relative;
@@ -77,4 +114,7 @@ table, th, td ,tr {
   }
 
 
-
+.pag{ 
+  width:300px;
+  overflow-x: auto;}
+ 

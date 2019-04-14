@@ -26,6 +26,12 @@ export class MapService {
     return this.http.get<Observable<any>>(this.rootURL + 'Valeur/'+nom);
   }
 
+  getOnlyValuesByNomIndicateur(nom): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Valeur/AllValues/'+nom);
+  }
+
+  
+
 
  
 }
