@@ -1,8 +1,8 @@
 
 
-<div class="jumbtron">
+
 <div style="background-color:darkslategray;">
-  <div  style=" margin-left: 500px;  " class="dropdown">
+  <div   class="dropdown">
     <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Indicateur----
     <span class="caret"></span></button>
     <ul class="dropdown-menu">
@@ -13,68 +13,83 @@
     </ul>
   </div>
 
+  <div  style=" margin-left: 100px;  " class="dropdown">
+    <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Niveau géographique----
+    </button>
+    <ul class="dropdown-menu">  
+            <li  ><a (click)="getValeurByNomIndicateur(indic)">Région</a></li>
+            <li  ><a (click)="getValeurByNomIndicateur(indic)">Province</a></li>
+            <li  ><a (click)="getValeurByNomIndicateur(indic)">Commune</a></li>
+          
+    </ul>
+  </div>
+
   <hr>
 </div>
-<button (click)="myFunction()">Try it</button>
-<div id="myDIV">
-  
-    <div class="menu_legend">
-   
-        <div *ngFor="let indic of  list_Nom_Indicateur">
-           
-         {{indic}}
-        
-            <div class="outer">  <div id="header-content">10000</div> 
-<div class="inner"><div id="header-content">4444 </div> </div>
+
+         
+<div class="tpanel"> <div *ngFor="let indic of indicateurs_choisis">
+                 
+    <input type="checkbox" (change)="toggleEditable($event,indic)" checked>        
+    <a (click)="RemoveLayer(indic)">{{indic}}</a>
+
+</div>  </div>           
+ 
 
 
-      </div>      
-        </div>  
-      </div>
-           
-
-      
-    </div>
-
-
-<div class="row">
-  <div class="col-md-6">
     
-    
-    <!--(click)="populateForm(emp)"-->
-  
-  
-  <div id="map">
-     <!-- <section id="side-panel">
-
-          <p>This proportional symbol map shows the relative magnitude of green house gas emissions in CO in 2015 by large facilites. Data are shown by <span style='color: #bd4932; font-weight: bold;'>fuel combustion</span> and <span style='color: #105b63; font-weight: bold;'> process emissions</span>.
-  
-          <h3>Metric tons of GHG</h3>
-          <div id='legend'>
-              <div id="legend-large"></div>
-              <div id="legend-small"></div>
-              <div id="legend-large-label"></div>
-              <div id="legend-small-label"></div>
+        <div  style=" margin-left: 100px;  " class="dropdown">
+            <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Indicateur----
+            <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <div *ngFor="let indic of indicateurs_choisis">
+                 
+                    <input type="checkbox" (change)="toggleEditable($event,indic)" checked>        
+                    <li  ><a (click)="RemoveLayer(indic)">{{indic}}</a></li>
+             
+                </div>     
+            </ul>
           </div>
-          <p>The data are reported to the EPA and available from their <a href="https://ghgdata.epa.gov/ghgp/main.do">FLIGHT</a> web applicaiton.</p>
-          <p>Map authored <a href="https://github.com/rgdonohue">Rich Donohue</a>.</p>
-  
-      </section>-->
-    
-    </div>
+     
+      <div id="map"></div>
+
+     
+    <!--  <div id="sidebar"><button id="toggle">Toggle</button>  -->      
+          <div *ngFor="let item of legendData | keyvalue">
+           
+        <div *ngIf=" !NotlegendData.includes(item.key)">  
+                <b>{{item.key}}</b>
+                <div *ngIf=" item.value[5]==='brute'">  
+    <br>
+ 
+  <br>
+     
+     
+    <div id="outer-circle" [ngStyle]="{'background': item.value[6]}">  <div id="header-content">  {{item.value[4][1]}}</div>   
+    <div id="inner-circle"><div id="header-content">{{item.value[4][0]}} </div> </div>
+   </div>
+   </div>
+   <div *ngIf="item.value[5]==='calculable'">  
+
+  <div><i [ngStyle]="{'background': item.value[6][0]}"></i>  {{item.value[0][0]}} &ndash; {{item.value[0][1]}}</div>
+  <div><i [ngStyle]="{'background': item.value[6][1]}"></i>  {{item.value[1][0]}} &ndash; {{item.value[1][1]}}</div>
+  <div><i [ngStyle]="{'background': item.value[6][2]}"></i>  {{item.value[2][0]}} &ndash; {{item.value[2][1]}}</div>
+  <div><i [ngStyle]="{'background': item.value[6][3]}"></i>  {{item.value[3][0]}} &ndash; {{item.value[3][1]}}</div>
+  <div><i [ngStyle]="{'background': item.value[6][4]}"></i>  {{item.value[4][0]}} &ndash;  {{item.value[4][1]}}</div> 
+   </div>
   </div>
-  <div class="col-md-6">
+
+
+
+</div>
+    
+ 
 
       
-
+    
      
-     
+ 
    <!--  <table >
-      <tr style="background: darkolivegreen;">
-        <th>Commune</th>
-        <th>Valeur</th> 
-        <th>Annee</th>
-      </tr>
       <tr *ngFor="let indic of dictTable" (mouseover)="highlightRow(indic)" (mouseout)="disablehighlightRow(indic)"
       [ngClass] = "{'highlight' : indic.id == selectedId}">
       <td>{{indic.id}}</td>
@@ -84,7 +99,10 @@
     <!-- </tr>
      
     </table>-->
-
+    <div></div>
+    <div class="container">
+      <div class="row">
+          <div class="col-lg-6 col-sm-12 right">
     <mat-table [dataSource]="dataSource"  class="mat-elevation-z8" matSort>
 
       <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
@@ -96,45 +114,34 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
     <mat-paginator class="pag" [length]="dataSource.length" [pageSize]="5" [pageIndex]="0" [pageSizeOptions]="[3,5,10]" showFirstLastButtons></mat-paginator>
-   
+   </div>
 
-
+   <div class="col-lg-6 col-sm-12 left">
     <div  style=" margin-left: 100px;  " class="dropdown">
       <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Indicateur----
       <span class="caret"></span></button>
       <ul class="dropdown-menu">
-          <div *ngFor="let indic of  indicateurs_choisis">
+          <div *ngFor="let indic of  indicateurs_choisis_chart">
            
               <li  ><a (click)="putchart(indic)">{{indic}}</a></li>
           </div>     
       </ul>
     </div>
+
+   
     <p id="solid">No chart to display</p>
     <div id='graph-container'>
-  <canvas id="myChart" ></canvas></div>
-    <!--<table id="myform" >
-      <tr style="background: darkolivegreen;">
-        <th>Commune</th>
-        
-      </tr>
-      <tr *ngFor="let indic of list_nom_communes">
-      <td>{{indic}}</td>
-      
-        
-      </tr>
-     
-    </table>-->
+    <canvas id="myChart" ></canvas></div>
 
-    
-  </div>
-</div>
+    </div>
+
+    </div></div>
+  
 
 
-</div>
 
 
 
 
 
   
-    

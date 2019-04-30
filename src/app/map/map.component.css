@@ -1,3 +1,23 @@
+
+#sidebar {
+  width: 200px;
+  height: 300px;
+  position: relative;
+  left: 0px;
+  border: 1px solid;
+}
+#toggle {
+  width: 10%;
+  height: 100%;
+  float: right;
+  margin-right: 0px;
+  margin-top: 0px;
+ 
+}
+
+
+
+
 #side-panel {
   position: absolute;
   bottom: 0;
@@ -11,34 +31,41 @@
   z-index: 800;
 }
 
-.outer {
-  padding-top:10px;
-  background-color:palegreen;
-  width:80px; /* You can define it by % also */
-  height:80px; /* You can define it by % also */
-  position:relative;
-  border:1px solid grey;
-  border-radius: 50%;
-  text-align: bottom;
-  }
+
   #header-content {
     position: absolute;
-    bottom: 60%;
-    left: 25px;
+   left:80px;
     font-size: 11px;
+    
   }
-  .inner {
-  text-align: bottom;
-  background-color:palegreen;
-  top: 50%; left:25%; /* of the container */
-  width:50%; /* of the container */
-  height:50%; /* of the container */
-  position: relative;
-  border:1px solid grey;
-  border-radius: 50%;
+  
+  .vertical-line {
+    width: 50px;
+    height: 2px;
+    background: #2ecc71;
+    margin: 120px auto 0 auto ;
+    margin-top:0px;
   }
-
-
+  #outer-circle {
+  
+    border-radius: 50%;
+    height:100px;
+    width:100px;
+    border:1px solid red;  
+   
+  }
+  #inner-circle {
+    position: relative;
+   
+    border:1px solid red;    
+   
+          
+    border-radius: 50%;
+    height:50px;
+    width:50px;
+      top:50px;
+    margin: 0px 0px 0px 25px;
+  }
 
 #solid{
   padding-left: 30%;
@@ -54,7 +81,28 @@ width :100px;
 
 }
 
+i { 
+  background: #2ecc71;
+  width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
 
+.square {
+  
+  width: 13px;
+  height: 13PX;
+}
+
+.container {
+  width: 95%;
+}
+.tpanel{
+  height:40px;
+  background-color: red;
+}
 #legend {
   position: relative;
   margin: 20px 0;
@@ -82,7 +130,8 @@ table tr.highlight {
 
 #map{
     height: 500px;
-    width: 100%;
+    width: 80%;
+    
 }
 
 table, th, td ,tr {
@@ -115,6 +164,6 @@ table, th, td ,tr {
 
 
 .pag{ 
-  width:300px;
+ 
   overflow-x: auto;}
  

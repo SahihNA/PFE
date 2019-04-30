@@ -8,7 +8,11 @@ export class MapService {
 
   readonly rootURL ="http://localhost:9090/"
 
-   constructor(private http : HttpClient) { }
+   constructor(private http : HttpClient) { 
+    /* this.getJSON().subscribe(data => {
+    console.log(data);});*/
+
+}
 
    getall(): Observable<any> {
     return this.http.get<Observable<any>>(this.rootURL + 'Valeur/all');
@@ -22,8 +26,20 @@ export class MapService {
     return this.http.get<Observable<any>>(this.rootURL + 'Valeur/NomCommunes');
   }
 
+  public getJSON(): Observable<any> {
+    return this.http.get("./assets/communej.json");
+}
+
+  getCommunes(): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Valeur/Communes');
+  }
+
   getValeurByNomIndicateur(nom): Observable<any> {
     return this.http.get<Observable<any>>(this.rootURL + 'Valeur/'+nom);
+  }
+
+  getInfoIndicateur(nom): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Indicateur/'+nom);
   }
 
   getOnlyValuesByNomIndicateur(nom): Observable<any> {
