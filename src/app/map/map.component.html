@@ -1,6 +1,9 @@
 
 
-
+<a (click)="toPDF()" type="button"  id="btnPrint" > print</a>
+<div id="dvContainer">
+  This content needs to be printed.
+</div>
 <div style="background-color:darkslategray;">
   <div   class="dropdown">
     <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Indicateur----
@@ -17,12 +20,36 @@
     <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Niveau géographique----
     </button>
     <ul class="dropdown-menu">  
-            <li  ><a (click)="getValeurByNomIndicateur(indic)">Région</a></li>
-            <li  ><a (click)="getValeurByNomIndicateur(indic)">Province</a></li>
-            <li  ><a (click)="getValeurByNomIndicateur(indic)">Commune</a></li>
+            <li  ><a (click)="getDecoupage('Région',0,0)">Région</a></li>
+            <li  ><a (click)="getDecoupage('Province',0,0)">Province</a></li>
+            <li  ><a (click)="ShowHidden()">Commune</a></li>
           
     </ul>
   </div>
+
+  <div  id="dropProvince" style="visibility: hidden  " class="dropdown">
+    <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Provinces----
+    </button>
+    <ul class="dropdown-menu">
+      <div *ngFor="let indic of  list_Nom_Indicateur">
+       
+          <li  ><a (click)="getDecoupage('Commune',indic,0)">{{indic}}</a></li>
+      </div>     
+  </ul>
+  </div>
+
+  <div  id="dropRegion" style="visibility: hidden  " class="dropdown">
+    <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Régions----
+    </button>
+    <ul class="dropdown-menu">
+      <div *ngFor="let indic of  list_Nom_Indicateur">
+       
+          <li  ><a (click)="getDecoupage('Commune',0,indic)">{{indic}}</a></li>
+      </div>     
+  </ul>
+  </div>
+
+  
 
   <hr>
 </div>
@@ -59,6 +86,32 @@
            
         <div *ngIf=" !NotlegendData.includes(item.key)">  
                 <b>{{item.key}}</b>
+                <div *ngFor="let i of item.value | keyvalue">
+            
+               <div *ngIf=" i.key==='classification'">  
+                <b> {{i.value}}</b>
+                <div *ngFor="let j of item.value | keyvalue">
+                  <div *ngIf=" j.key===i.value">  
+<div>{{j.value}}</div>
+                </div>
+               
+                </div>
+            </div>
+            </div>
+                <div  class="dropdown">
+                  <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Classification----
+                  </button>
+                  <ul class="dropdown-menu">
+                    <div>
+                     
+                        <li  ><a (click)=" changerClassification('Quantile',item.key)">Quantile</a></li>
+                        <li  ><a (click)=" changerClassification('Equidistant',item.key)">Equidistant</a></li>
+                        <li  ><a (click)=" changerClassification('progression geométrique à gauche',item.key)">progression geométrique à gauche</a></li>
+                        <li  ><a (click)=" changerClassification('progression geométrique à droite',item.key)">progression geométrique à droite</a></li>
+                  
+                    </div>     
+                </ul>
+                </div>
                 <div *ngIf=" item.value[5]==='brute'">  
     <br>
  
@@ -102,8 +155,16 @@
     <div></div>
     <div class="container">
       <div class="row">
+          <div class="example-header">
+              <mat-form-field  floatLabel="never">
+                <input matInput (keyup)="applyFilter($event.target.value)"autocomplete="off"  placeholder="Filter">
+                   </mat-form-field>
+                   <button mat-raised-button color="primary" (click)="ExportTOExcel()">Export as Excel</button>
+           
+            </div>
           <div class="col-lg-6 col-sm-12 right">
-    <mat-table [dataSource]="dataSource"  class="mat-elevation-z8" matSort>
+           <div  #TABLE>
+    <mat-table #table [dataSource]="dataSource"  class="mat-elevation-z8" matSort>
 
       <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
         <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
@@ -111,10 +172,11 @@
       </ng-container>
     
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </mat-table>
+  </div>
     <mat-paginator class="pag" [length]="dataSource.length" [pageSize]="5" [pageIndex]="0" [pageSizeOptions]="[3,5,10]" showFirstLastButtons></mat-paginator>
-   </div>
+     </div>
 
    <div class="col-lg-6 col-sm-12 left">
     <div  style=" margin-left: 100px;  " class="dropdown">

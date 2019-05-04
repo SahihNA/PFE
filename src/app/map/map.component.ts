@@ -1,24 +1,16 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild,ElementRef } from '@angular/core';
 import { MapService } from '../shared/map.service';
 import * as Chart from 'chart.js';
 import * as $ from 'jquery';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import 'chartjs-plugin-zoom';
+import * as XLSX from 'xlsx';
 
 var m=this;
 var V_B_N;
 declare let L;
 
-function getColor(d) {
-  return d > 1000 ? '#800026' :
-         d > 500  ? '#BD0026' :
-         d > 200  ? '#E31A1C' :
-         d > 100  ? '#FC4E2A' :
-         d > 50   ? '#FD8D3C' :
-         d > 20   ? '#FEB24C' :
-         d > 10   ? '#FED976' :
-                    '#FFEDA0';
-}
+
 
 const elements_tableau = [
 ];
@@ -68,37 +60,21 @@ export class MapComponent implements OnInit {
 map;
 info;
 
+
 @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('TABLE') table: ElementRef;
 
 
   constructor(private service: MapService) { }
 
   ngOnInit() {
    
-    console.log('Reading local json files');
- //console.log(SampleJson);
- 
-    $(document).ready(function () {
-      $("#toggle").on('click', function () {
-        var x = $("#sidebar").css("left");
-      if(x == '0px') {
-          $("#sidebar").animate({
-              left: '-20%'
-          });
-          } else {
-          $("#sidebar").animate({
-              left: '0'
-          });
-          }
-         
-      });
-  });
+    
+    
     $(window).click(function () {
       $('#test').css('background-color', 'red');
       });
-
-   // this.drawLegend();
 
    this.service.getJSON().subscribe(data => {
      console.log('here json');
@@ -160,11 +136,41 @@ this.infoPut();
         
   }
 
+  ShowHidden(){
+    document.getElementById("dropProvince").style.visibility = "visible";
+    document.getElementById("dropRegion").style.visibility = "visible";
+  }
+
+  getDecoupage(x,y,z){
+    if(x==='Commune'){
+      if(y!=0){
+        console.log(y);
+      }
+      else{
+        console.log(z);
+      }
+     
+    }
+
+    if(x=='Province'){
+
+    }
+    if(x=='Région'){
+      
+    }
+
+  }
+
+  ShowModal(){
+
+  }
   p( x){
     var myStyle = {
-      "color": "8064a2",
-      "weight": 5,
-      "opacity": 0.65
+      weight: 5,
+          fillColor: "orange",
+          color: 'blue',
+          dashArray: '',
+          fillOpacity: 0.7
   };
   
   L.geoJSON(x, {
@@ -292,14 +298,10 @@ this.infoPut();
   getInfoIndicateur(indic){
     this.service.getInfoIndicateur(indic).subscribe(
       (res) => {
-       
-          
-
+ 
           this.infoIndicateur = res;
           this.CalculIntervalles();
-         
-        
-
+ 
       }, 
       (err) => {
         alert("erreur lors de la get des incident");
@@ -408,36 +410,96 @@ this.infoPut();
     var mc;
     var diss_standarise5;
     var restevirgule=0;
+
+    //cas diss a gauche 
+    console.log('diss a gauche');      
+    if(min==0){
+    arr = this.list_OnlyValues_byNomIndicateur.filter(function(item) { 
+       return item !== 0
+     
+   })
+   mc=Math.min.apply(null,arr);
+ }
+    else {mc=min;}
+    var  r=Math.pow(10, (Math.log10(max)-Math.log10(mc))/5);
+    if(this.infoIndicateur[0].type==='brute'){
+      diss_standarise5=[[min,Math.trunc(mc*r)],[Math.trunc(mc*r),Math.trunc(mc*Math.pow(r,2))],[Math.trunc(mc*Math.pow(r,2)),Math.trunc(mc*Math.pow(r,3))],[Math.trunc(mc*Math.pow(r,3)),Math.trunc(mc*Math.pow(r,4))],[Math.trunc(mc*Math.pow(r,4)),max]];
+    }
+    else{
+ diss_standarise5=[[min,Math.trunc(mc*r*1000)/1000],[Math.trunc(mc*r*1000)/1000,Math.trunc(mc*Math.pow(r,2)*1000)/1000],[Math.trunc(mc*Math.pow(r,2)*1000)/1000,Math.trunc(mc*Math.pow(r,3)*1000)/1000],[Math.trunc(mc*Math.pow(r,3)*1000)/1000,Math.trunc(mc*Math.pow(r,4)*1000)/1000],[Math.trunc(mc*Math.pow(r,4)*1000)/1000,Math.trunc(max*1000)/1000]];
+    }
+        console.log('this is mc');
+         this.legendData[this.dropdownIndicateur]={};
+    this.legendData[this.dropdownIndicateur]['progression geométrique à gauche'] =diss_standarise5; 
+     //cas diss a droite 
+
+    if(min==0){
+      arr = this.list_OnlyValues_byNomIndicateur.filter(function(item) { 
+         return item !== 0
+       
+     })
+     mc=Math.min.apply(null,arr);
+   }
+      else {mc=min;}
+      var  r=Math.pow(10, (Math.log10(max)-Math.log10(mc))/5);
+               console.log('diss stan'+r+'------------'+mc);
+     
+                     diss_standarise5=[[min,mc+max-mc*Math.pow(r,4)],[mc+max-mc*Math.pow(r,4),mc+max-mc*Math.pow(r,3)],[mc+max-mc*Math.pow(r,3),mc+max-mc*Math.pow(r,2)],[mc+max-mc*Math.pow(r,2),mc+max-mc*r],[mc+max-mc*r,max]];
+
+                console.log(diss_standarise5);
+       //this.legendData[this.dropdownIndicateur] =diss_standarise5;    
+         
+       this.legendData[this.dropdownIndicateur]['progression geométrique à droite'] =diss_standarise5; 
+  
+          //cas symetrique
+          console.log('list values');
+          this.list_OnlyValues_byNomIndicateur.sort((a, b) => a - b);
+       
+          console.log(this.list_OnlyValues_byNomIndicateur);
+          const reduce = (accumulator, currentValue) => accumulator + currentValue;
+          var l=this.list_OnlyValues_byNomIndicateur.length-1;
+          var l5=(this.list_OnlyValues_byNomIndicateur.length-1)/5;
+          var qtl=[];
+          for(var i=0;i<5;i++){
+            qtl[i]=[this.list_OnlyValues_byNomIndicateur[Math.trunc(l5*i)],this.list_OnlyValues_byNomIndicateur[Math.trunc(l5*(i+1))]];
+          }
+var moy= this.list_OnlyValues_byNomIndicateur.reduce(reduce)/l;
+     //console.log(this.list_OnlyValues_byNomIndicateur.sort((a, b) => a - b)    );
+     var x=0;
+     for(var i=0;i<this.list_OnlyValues_byNomIndicateur.length;i++){
+      x=x+Math.pow(this.list_OnlyValues_byNomIndicateur[i]- moy,2)   }
+ x=x/this.list_OnlyValues_byNomIndicateur.length;
+    var g=Math.sqrt(x);
+    console.log('ecart'+g+'moy'+moy);
+    var diss_standarise=[[min,moy-1.5*x],[moy-1.5*x,moy-0.5*x],[moy-0.5*x,moy+0.5*x],[moy-0.5*x,moy+1.5*x],[moy+1.5*x,max]];
+    this.legendData[this.dropdownIndicateur]['Quantile'] =qtl; 
+  
+//cas multimodale ou stable
+
+var quantilles5=(Math.max.apply(null,this.list_OnlyValues_byNomIndicateur )-Math.min.apply(null,this.list_OnlyValues_byNomIndicateur) )/5;
+    var division=[];
+    var min= Math.min.apply(null,this.list_OnlyValues_byNomIndicateur);
+    for(var i=0;i<5;i++){
+     division[i]=[min+i*quantilles5,min+(i+1)*quantilles5];
+    }
+    console.log(division)
+    this.legendData[this.dropdownIndicateur]['Equidistant'] =division; 
+    this.legendData[this.dropdownIndicateur]['classification']='Quantile';
+    console.log(this.legendData[this.dropdownIndicateur][this.legendData[this.dropdownIndicateur]['classification']]);
+    console.log('here classification');
+    console.log(this.legendData[this.dropdownIndicateur]  )  ;
+    
+   
+        //this.legendData[this.dropdownIndicateur] =division;
+        this.geti(this.dropdownIndicateur);
+
+
+    
+
                if(mode<moyenne){
           if(changement==0 || (changement==1 && binaire[i]==1) )
          {
-           console.log('diss a gauche');
-           
-           
-         if(min==0){
-         arr = this.list_OnlyValues_byNomIndicateur.filter(function(item) { 
-            return item !== 0
-          
-        })
-        mc=Math.min.apply(null,arr);
-      }
-         else {mc=min;}
-         var  r=Math.pow(10, (Math.log10(max)-Math.log10(mc))/5);
-         if(this.infoIndicateur[0].type==='brute'){
-           diss_standarise5=[[min,Math.trunc(mc*r)],[Math.trunc(mc*r),Math.trunc(mc*Math.pow(r,2))],[Math.trunc(mc*Math.pow(r,2)),Math.trunc(mc*Math.pow(r,3))],[Math.trunc(mc*Math.pow(r,3)),Math.trunc(mc*Math.pow(r,4))],[Math.trunc(mc*Math.pow(r,4)),max]];
-         }
-
-         else{
-    // Math.round(mc*r*100)/100
-      diss_standarise5=[[min,Math.trunc(mc*r*1000)/1000],[Math.trunc(mc*r*1000)/1000,Math.trunc(mc*Math.pow(r,2)*1000)/1000],[Math.trunc(mc*Math.pow(r,2)*1000)/1000,Math.trunc(mc*Math.pow(r,3)*1000)/1000],[Math.trunc(mc*Math.pow(r,3)*1000)/1000,Math.trunc(mc*Math.pow(r,4)*1000)/1000],[Math.trunc(mc*Math.pow(r,4)*1000)/1000,Math.trunc(max*1000)/1000]];
-         }
-             console.log('this is mc');
-          //restevirgule=mc*r-Math.trunc(mc*r)+mc*Math.pow(r,2)-Math.trunc(mc*Math.pow(r,2))+mc*Math.pow(r,3)-Math.trunc(mc*Math.pow(r,3))+mc*Math.pow(r,4)-Math.trunc(mc*Math.pow(r,4));
-        
-         console.log(this.infoIndicateur[0].type);
-         console.log(restevirgule);
-         this.legendData[this.dropdownIndicateur] =diss_standarise5;    
-             this.geti(this.dropdownIndicateur);
+      console.log('diss a gauche');
         } 
          else{
           console.log('multimodale')
@@ -447,23 +509,9 @@ this.infoPut();
         
         }
         else if(mode>moyenne){
-          if(changement==0 || (changement==1)){console.log('diss a droite') 
-          if(min==0){
-            arr = this.list_OnlyValues_byNomIndicateur.filter(function(item) { 
-               return item !== 0
-             
-           })
-           mc=Math.min.apply(null,arr);
-         }
-            else {mc=min;}
-            var  r=Math.pow(10, (Math.log10(max)-Math.log10(mc))/5);
-                     console.log('diss stan'+r+'------------'+mc);
-           
-                           diss_standarise5=[[min,mc+max-mc*Math.pow(r,4)],[mc+max-mc*Math.pow(r,4),mc+max-mc*Math.pow(r,3)],[mc+max-mc*Math.pow(r,3),mc+max-mc*Math.pow(r,2)],[mc+max-mc*Math.pow(r,2),mc+max-mc*r],[mc+max-mc*r,max]];
-    
-                      console.log(diss_standarise5);
-             this.legendData[this.dropdownIndicateur] =diss_standarise5;    
-                this.geti(this.dropdownIndicateur);
+          if(changement==0 || (changement==1)){
+            console.log('diss a droite') 
+         
         
         }
           else{
@@ -474,23 +522,7 @@ this.infoPut();
         else if(mode===moyenne){
           if(changement==1){
             console.log('symetrique');
-            const reducer = (accumulator, currentValue) => accumulator + currentValue;
-            var l=this.list_OnlyValues_byNomIndicateur.length;
-  var moy= this.list_OnlyValues_byNomIndicateur.reduce(reducer)/l;
-       //console.log(this.list_OnlyValues_byNomIndicateur.sort((a, b) => a - b)    );
-       var x=0;
-       for(var i=0;i<this.list_OnlyValues_byNomIndicateur.length;i++){
-        x=x+Math.pow(this.list_OnlyValues_byNomIndicateur[i]- moy,2)
-        
 
-      }
-  
-      x=x/this.list_OnlyValues_byNomIndicateur.length;
-   
-      var g=Math.sqrt(x);
-      console.log('ecart'+g+'moy'+moy);
-      var diss_standarise=[[min,moy-1.5*x],[moy-1.5*x,moy-0.5*x],[moy-0.5*x,moy+0.5*x],[moy-0.5*x,moy+1.5*x],[moy+1.5*x,max]];
-     
           }
           else{
             console.log('multimodale');
@@ -503,6 +535,8 @@ this.infoPut();
           this.quantille();
    
         }
+        // this.geti(this.dropdownIndicateur);
+
 
   }
 
@@ -571,6 +605,38 @@ this.info.addTo(this.map);
     this.circlemarkers.resetStyle  (this.circlemarkers._layers[indic.id]);
     
     
+  }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
+  }
+
+  ExportTOExcel()
+{
+  const ws: XLSX.WorkSheet=XLSX.utils.table_to_sheet(this.table.nativeElement);
+ 
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  
+  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+  
+  /* save to file */
+  XLSX.writeFile(wb, 'SheetJS.xlsx');
+  
+}
+
+  toPDF(){
+   console.log('topdf')
+      var divContents = $("#dvContainer").html();
+      var printWindow = window.open('', '', 'height=400,width=800');
+      printWindow.document.write('<html><head><title>DIV Contents</title>');
+      printWindow.document.write('</head><body >');
+      printWindow.document.write(divContents);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.print();
+ 
   }
 
   populateTable(){
@@ -701,22 +767,29 @@ this.globaldataChart[this.list_V_byNomIndicateur[0].indicateur.nom] = data;}
  
   populateMap(){
     var c=this;
-    var v=this.legendData[this.dropdownIndicateur];
-    this.legendData[this.dropdownIndicateur].push(this.list_V_byNomIndicateur[0].indicateur.type);
-    console.log(this.legendData[this.dropdownIndicateur]);
+    console.log('legendData');
+    console.log(this.legendData);
+   
+    var v= this.legendData[this.dropdownIndicateur][this.legendData[this.dropdownIndicateur]['classification']];
+    this.legendData[this.dropdownIndicateur]['type']=this.list_V_byNomIndicateur[0].indicateur.type;
+    console.log(v);
   
     console.log('this is v');
     console.log(this.list_V_byNomIndicateur[0].indicateur.type);
     if(this.list_V_byNomIndicateur[0].indicateur.type==='calculable'){
       var degradecouleur=['#FFEDA0', '#FEB24C'  ,'#FC4E2A' , '#E31A1C'  ,'#800026'    ];
-      this.legendData[this.dropdownIndicateur].push(degradecouleur);
+     this.legendData[this.dropdownIndicateur]['couleur']=degradecouleur;
+      console.log('gg');
+      console.log(this.legendData);
     var m=this.dropdownIndicateur;
+    var f=0;
     this.polygones=L.geoJson(this.list_communesjson,{
       style: function(feature) {
         for (var i = 0; i < V_B_N.length; i++) {
           if (feature.properties.OBJECTID===V_B_N[i].commune.id){
             feature.properties[V_B_N[i].indicateur.nom ]=V_B_N[i].valeur;
             if(v[0][0]<= V_B_N[i].valeur &&  V_B_N[i].valeur<=v[0][1]){ 
+              f++;
               return {
 
                 fillColor:degradecouleur[0],
@@ -741,6 +814,7 @@ this.globaldataChart[this.list_V_byNomIndicateur[0].indicateur.nom] = data;}
                  };}
                 
             }
+            
            //console.log('this is density');
           
            //console.log(V_B_N[i].commune.id )
@@ -748,14 +822,14 @@ this.globaldataChart[this.list_V_byNomIndicateur[0].indicateur.nom] = data;}
     }, onEachFeature(feature, layer) {
     
       layer.on('mouseover', function (e) { 
+        console.log('this is f'+f);
         //console.log(layer);
-        layer.setStyle({
+       /* layer.setStyle({
           weight: 5,
-          fillColor: "orange",
           color: 'blue',
           dashArray: '',
           fillOpacity: 0.7
-        });
+        });*/
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
           layer.bringToFront();
         }
@@ -767,7 +841,7 @@ this.globaldataChart[this.list_V_byNomIndicateur[0].indicateur.nom] = data;}
         });
         layer.on('mouseout', function (e) {
           //console.log('targeeet'+e.target)
-          c.polygones.resetStyle(e.target);
+         // c.polygones.resetStyle(e.target);
           c.info.update(); 
           });
           layer.on('click', function (e) {
@@ -779,20 +853,24 @@ this.globaldataChart[this.list_V_byNomIndicateur[0].indicateur.nom] = data;}
   this.mapData[this.dropdownIndicateur]=this.polygones;
      this.mapData[this.dropdownIndicateur].addTo(this.map);
 
+    
+
+     
+
 }
 
 
     
   
   else{this.couleur=this.getRandomColor();
-    this.legendData[this.dropdownIndicateur].push(this.couleur);
+    this.legendData[this.dropdownIndicateur]['couleur']=this.couleur;
     var dict = [];
  
     for (var i = 0; i < this.list_V_byNomIndicateur.length; i++) {
       dict.push({
         type:   "Feature",
         properties: {"nomCommune":this.list_V_byNomIndicateur[i].commune.nomC,"valeur":this.list_V_byNomIndicateur[i].valeur,"idCommune":this.list_V_byNomIndicateur[i].commune.id},
-        geometry:{"type": "Point", "coordinates": [this.list_V_byNomIndicateur[i].commune.x,this.list_V_byNomIndicateur[i].commune.y]}
+        geometry:{"type": "Point", "coordinates": [this.list_V_byNomIndicateur[i].commune.longitude,this.list_V_byNomIndicateur[i].commune.latitude]}
     });}
 
 
@@ -864,6 +942,85 @@ this.mapData[this.dropdownIndicateur]=this.circlemarkers;
       t.push(food)  ; }
       this.dictTable=t;*/
      
+  }
+
+  changerClassification(x,y){
+var c=this;
+var v= this.legendData[y][x];
+this.legendData[y]['classification']=x;
+if(this.legendData[y]['type']==='calculable'){
+  var degradecouleur=['#FFEDA0', '#FEB24C'  ,'#FC4E2A' , '#E31A1C'  ,'#800026'    ];
+     
+  c.mapData[y].eachLayer(function(featureInstanceLayer) {
+   console.log('hello');
+   console.log(featureInstanceLayer.feature.properties.valeur);
+            if(v[0][0]<=featureInstanceLayer.feature.properties[y] && 
+          featureInstanceLayer.feature.properties[y]<=v[0][1]){ 
+           
+{
+   featureInstanceLayer.setStyle({
+       fillColor: 'green',
+       fillOpacity: 0.8,
+       weight: 0.5
+   });}}
+
+   for(var j=1;j<v.length;j++){
+     if(v[j][0]<featureInstanceLayer.feature.properties[y] &&  Math.trunc(featureInstanceLayer.feature.properties[y]*1000)/1000 <=v[j][1]){ 
+   { featureInstanceLayer.setStyle({
+
+     fillColor: degradecouleur[j],
+     weight: 1,
+     opacity: 1,
+     color: 'white',
+     dashArray: '3',
+     fillOpacity: 0.7
+   });}}
+       
+       
+   }
+
+});
+
+}
+else{
+  var proportionCercles=[3,6,12,24,48];
+  c.mapData[y].eachLayer(function(featureInstanceLayer) {
+              if(v[0][0]<=featureInstanceLayer.feature.properties.valeur && 
+           featureInstanceLayer.feature.properties.valeur<=v[0][1]){ 
+            
+ {
+    featureInstanceLayer.setStyle({
+      radius: proportionCercles[0],
+      fillColor:'green',
+     weight: 1,
+     opacity: 1,
+     color: 'white',
+     dashArray: '3',
+     fillOpacity: 0.7
+    });}}
+ 
+    for(var j=1;j<v.length;j++){
+      if(v[j][0]<featureInstanceLayer.feature.properties.valeur &&  Math.trunc(featureInstanceLayer.feature.properties.valeur*1000)/1000 <=v[j][1]){ 
+    { featureInstanceLayer.setStyle({
+ 
+      radius: proportionCercles[j],
+      fillColor:'blue',
+     weight: 1,
+     opacity: 1,
+     color: 'white',
+     dashArray: '3',
+     fillOpacity: 0.7
+    });}}
+        
+        
+    }
+ 
+ });
+
+}
+
+
+
   }
 
   RemoveLayer(layer_to_remove){

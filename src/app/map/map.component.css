@@ -80,6 +80,13 @@
 width :100px;
 
 }
+tr.mat-header-row, tr.mat-row {
+  display: flex;
+  }
+
+  tr.mat-header-row {
+   background-color: green;
+    }
 
 i { 
   background: #2ecc71;

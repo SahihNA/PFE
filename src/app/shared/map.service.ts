@@ -30,6 +30,13 @@ export class MapService {
     return this.http.get("./assets/communej.json");
 }
 
+public getJSONProvinces(): Observable<any> {
+  return this.http.get("./assets/provincesj.json");
+}
+public getJSONRegions(): Observable<any> {
+  return this.http.get("./assets/regionj.json");
+}
+
   getCommunes(): Observable<any> {
     return this.http.get<Observable<any>>(this.rootURL + 'Valeur/Communes');
   }
