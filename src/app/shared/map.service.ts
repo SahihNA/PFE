@@ -25,6 +25,13 @@ export class MapService {
   getNomCommunes(): Observable<any> {
     return this.http.get<Observable<any>>(this.rootURL + 'Valeur/NomCommunes');
   }
+  getProvinces(): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Valeur/Provinces');
+  }
+
+  getRegions(): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Valeur/Regions');
+  }
 
   public getJSON(): Observable<any> {
     return this.http.get("./assets/communej.json");
@@ -34,15 +41,31 @@ public getJSONProvinces(): Observable<any> {
   return this.http.get("./assets/provincesj.json");
 }
 public getJSONRegions(): Observable<any> {
-  return this.http.get("./assets/regionj.json");
+  return this.http.get("./assets/regjson1.json");
 }
 
-  getCommunes(): Observable<any> {
-    return this.http.get<Observable<any>>(this.rootURL + 'Valeur/Communes');
+  getCommunes(codeprov): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Valeur/Communes/'+codeprov);
   }
-
+   
+  getProvincesByCodeRegion(codereg): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Valeur/Provinces/'+codereg);
+  }
+ 
   getValeurByNomIndicateur(nom): Observable<any> {
     return this.http.get<Observable<any>>(this.rootURL + 'Valeur/'+nom);
+  }
+
+  getValeurByNomIndicateurCodeprov(nom,codeprov): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Valeur/'+nom+'/'+codeprov);
+  }
+
+  getValeurProvincesByNomIndicateur(nom): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'ValeurProv/'+nom);
+  }
+
+  getValeurRegionsByNomIndicateur(nom): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'ValeurReg/'+nom);
   }
 
   getInfoIndicateur(nom): Observable<any> {
@@ -51,6 +74,16 @@ public getJSONRegions(): Observable<any> {
 
   getOnlyValuesByNomIndicateur(nom): Observable<any> {
     return this.http.get<Observable<any>>(this.rootURL + 'Valeur/AllValues/'+nom);
+  }
+
+  getOnlyValuesByNomIndicateurCodeprov(nom,codeprov): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Valeur/OnlyValues/'+nom+'/'+codeprov);
+  }
+  getOnlyValuesByNomIndicateurProvinces(nom): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'ValeurProv/OnlyValues/'+nom);
+  }
+  getOnlyValuesByNomIndicateurRegions(nom): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'ValeurReg/OnlyValues/'+nom);
   }
 
   

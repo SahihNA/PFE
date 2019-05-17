@@ -1,21 +1,10 @@
 
-
+<!--
 <a (click)="toPDF()" type="button"  id="btnPrint" > print</a>
 <div id="dvContainer">
   This content needs to be printed.
 </div>
 <div style="background-color:darkslategray;">
-  <div   class="dropdown">
-    <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Indicateur----
-    <span class="caret"></span></button>
-    <ul class="dropdown-menu">
-        <div *ngFor="let indic of  list_Nom_Indicateur">
-         
-            <li  ><a (click)="getValeurByNomIndicateur(indic)">{{indic}}</a></li>
-        </div>     
-    </ul>
-  </div>
-
   <div  style=" margin-left: 100px;  " class="dropdown">
     <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Niveau géographique----
     </button>
@@ -26,6 +15,7 @@
           
     </ul>
   </div>
+
 
   <div  id="dropProvince" style="visibility: hidden  " class="dropdown">
     <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Provinces----
@@ -44,7 +34,7 @@
     <ul class="dropdown-menu">
       <div *ngFor="let indic of  list_Nom_Indicateur">
        
-          <li  ><a (click)="getDecoupage('Commune',0,indic)">{{indic}}</a></li>
+          <li  ><a  (click)="getDecoupage('Commune',0,indic)">{{indic}}</a></li>
       </div>     
   </ul>
   </div>
@@ -53,8 +43,8 @@
 
   <hr>
 </div>
-
-         
+-->
+    <!--    
 <div class="tpanel"> <div *ngFor="let indic of indicateurs_choisis">
                  
     <input type="checkbox" (change)="toggleEditable($event,indic)" checked>        
@@ -62,7 +52,7 @@
 
 </div>  </div>           
  
-
+ 
 
     
         <div  style=" margin-left: 100px;  " class="dropdown">
@@ -77,64 +67,221 @@
                 </div>     
             </ul>
           </div>
-     
-      <div id="map"></div>
-
-     
-    <!--  <div id="sidebar"><button id="toggle">Toggle</button>  -->      
-          <div *ngFor="let item of legendData | keyvalue">
-           
-        <div *ngIf=" !NotlegendData.includes(item.key)">  
-                <b>{{item.key}}</b>
-                <div *ngFor="let i of item.value | keyvalue">
-            
-               <div *ngIf=" i.key==='classification'">  
-                <b> {{i.value}}</b>
-                <div *ngFor="let j of item.value | keyvalue">
-                  <div *ngIf=" j.key===i.value">  
-<div>{{j.value}}</div>
-                </div>
-               
-                </div>
+          -->
+          
+     <div>
+         <div id="c">
+           <div id="map"></div>
+         </div>
+      <div id="legend">
+                
+                <div *ngFor="let item of legendData | keyvalue">
+                 
+              <div *ngIf=" !NotlegendData.includes(item.key)">  
+                      <b>{{item.key}}</b>
+                      <div *ngFor="let i of item.value | keyvalue">
+                        <div *ngIf=" i.key==='type'">                           
+                            <div *ngIf=" i.value==='calculable'">  
+                                <div *ngFor="let i of item.value | keyvalue">
+                     <div *ngIf=" i.key==='classification'">  
+                      <div *ngFor="let j of item.value | keyvalue">
+                         
+                        <div *ngIf=" j.key===i.value">  
+                            
+                            <div><i class="square" [ngStyle]="{'background': '#FFEDA0'}"></i>  {{j.value[0][0]}} &ndash; {{j.value[0][1]}}</div>
+        <div ><i class="square" [ngStyle]="{'background': '#FEB24C'}"></i>  {{j.value[1][0]}} &ndash; {{j.value[1][1]}}</div>
+        <div><i class="square" [ngStyle]="{'background': '#FC4E2A'}"></i>  {{j.value[2][0]}} &ndash; {{j.value[2][1]}}</div>
+        <div><i class="square" [ngStyle]="{'background': '#E31A1C'}"></i>  {{j.value[3][0]}} &ndash; {{j.value[3][1]}}</div>
+        <div><i class="square" [ngStyle]="{'background': '#800026' }"></i>  {{j.value[4][0]}} &ndash;  {{j.value[4][1]}}</div> 
+       
+                      </div></div>  </div>  </div>  
+                      <div  class="dropdown">
+                          <button  class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">---Classification----
+                          </button>
+                          <ul class="dropdown-menu">
+                            <div>
+                             
+                                <li  ><a (click)=" changerClassification('Quantile',item.key)">Quantile</a></li>
+                                <li  ><a (click)=" changerClassification('Equidistant',item.key)">Equidistant</a></li>
+                                <li  ><a (click)=" changerClassification('progression geométrique à gauche',item.key)">progression geométrique à gauche</a></li>
+                                <li  ><a (click)=" changerClassification('progression geométrique à droite',item.key)">progression geométrique à droite</a></li>
+                          
+                            </div>     
+                        </ul>
+                        </div>
+                    </div>   
+                      
+      
+                      <div *ngIf=" i.value==='brute'">  
+                          <div *ngFor="let i of item.value | keyvalue">
+                              <div *ngIf=" i.key==='classification'">  
+                               <div *ngFor="let j of item.value | keyvalue">
+                                  
+                                 <div *ngIf=" j.key===i.value"> 
+                                    <div *ngFor="let m of item.value | keyvalue">
+                                        <div *ngIf=" m.key==='couleur'">  
+        
+          <div id="outer-circle" [ngStyle]="{'background': m.value}">  <div id="header-content">  {{j.value[4][1]}}</div>   
+          <div id="inner-circle"><div id="header-content">{{j.value[4][0]}} </div> </div>
+         </div></div></div></div></div>
+         </div></div> 
+      
+<br>
+<br>
+          <div  class="form-group" >
+                <select class="form-control" (change)="changerClassification($event.target.value,item.key)" id="exampleFormControlSelect1">
+                        <option value="Athletics:" disabled="disabled">Classification</option>
+                    <option>Quantile</option>
+                        <option>Equidistant</option>
+                        <option>progression geométrique à gauche</option>
+                        <option>progression geométrique à droite</option>
+                </select>
             </div>
-            </div>
-                <div  class="dropdown">
-                  <button  class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">---Classification----
-                  </button>
-                  <ul class="dropdown-menu">
-                    <div>
-                     
-                        <li  ><a (click)=" changerClassification('Quantile',item.key)">Quantile</a></li>
-                        <li  ><a (click)=" changerClassification('Equidistant',item.key)">Equidistant</a></li>
-                        <li  ><a (click)=" changerClassification('progression geométrique à gauche',item.key)">progression geométrique à gauche</a></li>
-                        <li  ><a (click)=" changerClassification('progression geométrique à droite',item.key)">progression geométrique à droite</a></li>
+        
+        </div> </div></div>
+         
+        </div>
+      
+      
+      
+      </div>
+      </div>
+      <div id="mySidenav" >
+          <div id="indic">
+              <span class="fa-stack fa-lg">
+              <i class="fa fa-square-o fa-stack-2x"></i>
+              <i class="fa fa-line-chart fa-stack-1x"></i>
+              </span>
+              <div id="indic-c"> 
+                  <div style="text-align: center">
+                      <span class="label label-info">listes des indicateurs : </span>
+                  </div>
+                  <div *ngFor="let indic of  list_Nom_Indicateur">
+                     <br> <a (click)="getValeurByNomIndicateur(indic)">{{indic}}</a>
+                  </div>
                   
-                    </div>     
-                </ul>
+              </div> 
+          </div> 
+          <div id="check">
+          <span class="fa-stack fa-lg">
+          <i class="fa fa-square-o fa-stack-2x"></i>
+          <i class="fa fa-check-square fa-stack-1x"></i>
+          </span>
+          <div id="check-c">
+              <div style="text-align: center">
+              <span class="label label-info">listes selectioné : </span>
+              </div>
+              <div *ngFor="let indic of indicateurs_choisis">
+                 <br>
+                  <input type="checkbox" (change)="toggleEditable($event,indic)" checked>        
+                  <a (click)="RemoveLayer(indic)">{{indic}}</a>
+              
+              </div>
+              
+          </div>
+         </div> 
+         <div id="indi">
+                <span class="fa-stack fa-lg">
+                <i class="fa fa-square-o fa-stack-2x"></i>
+                <i class="fa fa-file-pdf-o fa-stack-1x" ></i>
+                </span>
+                <div id="indi-c"> 
+                    <div style="text-align: center">
+                        <span class="label label-info">Rapport sur les indicateurs  </span>
+                    </div>
+                    <a  (click)="openDialog()">Génerer rapport</a>
+
+                    <div id="dvContainer"></div>
+                    
+                </div> 
+            </div> 
+      </div>
+      <div id="ngeo">
+      <div id="dropRegion" class="form-group" style="visibility: hidden  ">
+          <select class="form-control" (change)="p($event.target.value)" id="exampleFormControlSelect1">
+                <option  disabled="disabled">Régions</option>
+                <option *ngFor="let option of list_Regions; index as i"
+                [value]="option.code_region" >{{ option.nomR }}</option>
+          </select>
+      </div>
+      <div   class="form-group">
+          <select class="form-control" (change)="test($event.target.value)" id="exampleFormControlSelect1">
+                <option  disabled="disabled">Niveau geographique</option>
+           
+            <option>région</option>
+            <option>province</option>
+            <option>commune</option>
+          </select>
+      </div>
+     
+      <div id="dropProvince"  class="form-group" style="visibility: hidden  ">
+          <select class="form-control" (change)="p($event.target.value)" id="exampleFormControlSelect1">
+                <option value="Athletics:" disabled="disabled">Provinces</option>
+            <option *ngFor="let option of list_Nom_Provinces; index as i"
+             [value]="option.code_province" >{{ option.nomP }}</option>
+            
+          </select>
+      </div>
+    </div>
+      <div id="down">
+        <div id="small">
+            <div class="col-lg-6 col-sm-6 right-s" style="text-align: center">
+            la table
+            </div>
+            <div class="col-lg-6 col-sm-6 left-s" style="text-align: center">
+            Le diagramme
+            </div>
+        </div>
+        <div id="long">
+          <div class="container">
+              <div class="row">
+                  <div class="col-lg-6 col-sm-6 right">
+                      <div class="example-header" style="text-align: center">
+                          <mat-form-field  floatLabel="never">
+                            <input matInput (keyup)="applyFilter($event.target.value)"autocomplete="off"  placeholder="Filter">
+                               </mat-form-field>
+                               <button class="btn btn-primary" color="primary" (click)="ExportTOExcel()">Export as Excel</button>
+                       
+                        </div>
+                   <div  #TABLE>
+            <mat-table #table [dataSource]="dataSource"  class="mat-elevation-z8" matSort>
+        
+              <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element[column]}} </mat-cell>
+              </ng-container>
+            
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </mat-table>
+          </div>
                 </div>
-                <div *ngIf=" item.value[5]==='brute'">  
-    <br>
- 
-  <br>
+           <div class="col-lg-6 col-sm-6 left">
+            
+            <div  class="form-group">
+                    <select class="form-control" (change)="putchart($event.target.value)" id="exampleFormControlSelect1">
+                          <option value="Athletics:" disabled="disabled">Choisissez un indicateur</option>
+                      <option *ngFor="let indic of  indic_choisis_chart; index as i"
+                      >{{ indic }}</option>
+                      
+                    </select>
+                </div>
+        
+           
+            <div id="solid">Sélectionnez un indicateur</div>
+            <div id='graph-container'>
+            <canvas id="myChart" ></canvas></div>
+        
+            </div>
+        
+            </div></div>
+          </div>
+      </div>
+    </div>
      
-     
-    <div id="outer-circle" [ngStyle]="{'background': item.value[6]}">  <div id="header-content">  {{item.value[4][1]}}</div>   
-    <div id="inner-circle"><div id="header-content">{{item.value[4][0]}} </div> </div>
-   </div>
-   </div>
-   <div *ngIf="item.value[5]==='calculable'">  
-
-  <div><i [ngStyle]="{'background': item.value[6][0]}"></i>  {{item.value[0][0]}} &ndash; {{item.value[0][1]}}</div>
-  <div><i [ngStyle]="{'background': item.value[6][1]}"></i>  {{item.value[1][0]}} &ndash; {{item.value[1][1]}}</div>
-  <div><i [ngStyle]="{'background': item.value[6][2]}"></i>  {{item.value[2][0]}} &ndash; {{item.value[2][1]}}</div>
-  <div><i [ngStyle]="{'background': item.value[6][3]}"></i>  {{item.value[3][0]}} &ndash; {{item.value[3][1]}}</div>
-  <div><i [ngStyle]="{'background': item.value[6][4]}"></i>  {{item.value[4][0]}} &ndash;  {{item.value[4][1]}}</div> 
-   </div>
-  </div>
-
-
-
-</div>
+    
+      <!--  <div id="sidebar"><button id="toggle">Toggle</button>  -->      
+          
     
  
 
@@ -152,7 +299,7 @@
     <!-- </tr>
      
     </table>-->
-    <div></div>
+    <!--
     <div class="container">
       <div class="row">
           <div class="example-header">
@@ -197,13 +344,5 @@
 
     </div>
 
-    </div></div>
-  
-
-
-
-
-
-
-
+    </div></div> -->
   
