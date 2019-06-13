@@ -5,6 +5,9 @@ table {
   button {
     margin: 16px 8px;
   }
-
+  .navbar {height: 5px;
+    background-color: brown;
+    }
   
+
   

@@ -74,11 +74,18 @@
            <div id="map"></div>
          </div>
       <div id="legend">
+          <div style="text-align: center">Légende</div>
+          <hr>
                 
                 <div *ngFor="let item of legendData | keyvalue">
                  
-              <div *ngIf=" !NotlegendData.includes(item.key)">  
-                      <b>{{item.key}}</b>
+              <div *ngIf=" !NotlegendData.includes(item.key)"> 
+                    <a (click)="getHisogramme(item.key)" > <i class="fa fa-pie-chart fa-2x"  aria-hidden="true"></i></a>
+                    
+                      <div style="text-align: center; font-weight: bold; ">    {{item.key}}     </div>
+                      
+                      
+                      <br>
                       <div *ngFor="let i of item.value | keyvalue">
                         <div *ngIf=" i.key==='type'">                           
                             <div *ngIf=" i.value==='calculable'">  
@@ -88,27 +95,22 @@
                          
                         <div *ngIf=" j.key===i.value">  
                             
-                            <div><i class="square" [ngStyle]="{'background': '#FFEDA0'}"></i>  {{j.value[0][0]}} &ndash; {{j.value[0][1]}}</div>
-        <div ><i class="square" [ngStyle]="{'background': '#FEB24C'}"></i>  {{j.value[1][0]}} &ndash; {{j.value[1][1]}}</div>
-        <div><i class="square" [ngStyle]="{'background': '#FC4E2A'}"></i>  {{j.value[2][0]}} &ndash; {{j.value[2][1]}}</div>
-        <div><i class="square" [ngStyle]="{'background': '#E31A1C'}"></i>  {{j.value[3][0]}} &ndash; {{j.value[3][1]}}</div>
-        <div><i class="square" [ngStyle]="{'background': '#800026' }"></i>  {{j.value[4][0]}} &ndash;  {{j.value[4][1]}}</div> 
+                            <div><i class="square" [ngStyle]="{'background': '#FFEDA0'}"></i>  {{j.value[0][0]}} &ndash; {{j.value[0][1]}}</div><br>
+                            <div ><i class="square" [ngStyle]="{'background': '#FEB24C'}"></i>  {{j.value[1][0]}} &ndash; {{j.value[1][1]}}</div><br>
+                            <div><i class="square" [ngStyle]="{'background': '#FC4E2A'}"></i>  {{j.value[2][0]}} &ndash; {{j.value[2][1]}}</div><br>
+                            <div><i class="square" [ngStyle]="{'background': '#E31A1C'}"></i>  {{j.value[3][0]}} &ndash; {{j.value[3][1]}}</div><br>
+                            <div><i class="square" [ngStyle]="{'background': '#800026' }"></i>  {{j.value[4][0]}} &ndash;  {{j.value[4][1]}}</div> 
        
                       </div></div>  </div>  </div>  
-                      <div  class="dropdown">
-                          <button  class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">---Classification----
-                          </button>
-                          <ul class="dropdown-menu">
-                            <div>
-                             
-                                <li  ><a (click)=" changerClassification('Quantile',item.key)">Quantile</a></li>
-                                <li  ><a (click)=" changerClassification('Equidistant',item.key)">Equidistant</a></li>
-                                <li  ><a (click)=" changerClassification('progression geométrique à gauche',item.key)">progression geométrique à gauche</a></li>
-                                <li  ><a (click)=" changerClassification('progression geométrique à droite',item.key)">progression geométrique à droite</a></li>
-                          
-                            </div>     
-                        </ul>
-                        </div>
+                      <div  class="form-group" >
+                        <select class="form-control" (change)="changerClassification($event.target.value,item.key)" id="exampleFormControlSelect1">
+                                <option value="Athletics:" disabled="disabled">Classification</option>
+                            <option>Quantile</option>
+                                <option>Equidistant</option>
+                                <option>progression geométrique à gauche</option>
+                                <option>progression geométrique à droite</option>
+                        </select>
+                    </div>
                     </div>   
                       
       
@@ -122,7 +124,7 @@
                                         <div *ngIf=" m.key==='couleur'">  
         
           <div id="outer-circle" [ngStyle]="{'background': m.value}">  <div id="header-content">  {{j.value[4][1]}}</div>   
-          <div id="inner-circle"><div id="header-content">{{j.value[4][0]}} </div> </div>
+          <div id="inner-circle"><div id="header-content1">{{j.value[4][0]}} </div> </div>
          </div></div></div></div></div>
          </div></div> 
       
@@ -151,15 +153,27 @@
               <span class="fa-stack fa-lg">
               <i class="fa fa-square-o fa-stack-2x"></i>
               <i class="fa fa-line-chart fa-stack-1x"></i>
+              
               </span>
+              <span id="bull"  style= "font-size: 12px;">Veuillez choisir un indicateur</span>
               <div id="indic-c"> 
-                  <div style="text-align: center">
-                      <span class="label label-info">listes des indicateurs : </span>
+                  <div style="text-align: center;  background-color:gainsboro;">
+                      <span class="label " >listes des indicateurs : </span>
                   </div>
+                  <div *ngFor="let theme of  listTheme">
+                      
+             <div style= "font-size: 15px; text-align: center; margin: 10px; background-color: rgb(233, 173, 61)">  {{theme.theme}}</div> 
+                 
                   <div *ngFor="let indic of  list_Nom_Indicateur">
-                     <br> <a (click)="getValeurByNomIndicateur(indic)">{{indic}}</a>
+                        <div *ngIf=" theme.theme===indic.theme.theme">
+                      <div style= "font-size: 15px; margin: 10px;" onmouseover="this.style.cursor='pointer';this.style.background='#d1caca'" 
+                     onmouseout="this.style.background='#e4e4e4';"
+                     (click)="getValeurByNomIndicateur(indic.nom)">{{indic.nom}}</div>
+                </div>
+
                   </div>
-                  
+                </div>
+                
               </div> 
           </div> 
           <div id="check">
@@ -168,13 +182,16 @@
           <i class="fa fa-check-square fa-stack-1x"></i>
           </span>
           <div id="check-c">
-              <div style="text-align: center">
-              <span class="label label-info">listes selectioné : </span>
+              <div style="text-align: center; background-color:gainsboro;">
+              <span class="label">listes selectioné : </span>
               </div>
               <div *ngFor="let indic of indicateurs_choisis">
                  <br>
-                  <input type="checkbox" (change)="toggleEditable($event,indic)" checked>        
-                  <a (click)="RemoveLayer(indic)">{{indic}}</a>
+                 <input type="checkbox" (change)="toggleEditable($event,indic)" checked>   
+                 <i (click)="RemoveLayer(indic)" class="fa fa-trash" aria-hidden="true"></i>  
+              <i onmouseover="this.style.cursor='pointer';this.style.background='#d1caca'" 
+              onmouseout="this.style.background='#e4e4e4';" style= "font-size: 16px;">{{indic}}</i>    
+                 
               
               </div>
               
@@ -186,10 +203,11 @@
                 <i class="fa fa-file-pdf-o fa-stack-1x" ></i>
                 </span>
                 <div id="indi-c"> 
-                    <div style="text-align: center">
-                        <span class="label label-info">Rapport sur les indicateurs  </span>
+                    <div style="text-align: center ;  background-color:gainsboro;">
+                        <span class="label">Rapport sur les indicateurs  </span>
                     </div>
-                    <a  (click)="openDialog()">Génerer rapport</a>
+                    <div style= "font-size: 16px;" onmouseover="this.style.cursor='pointer';this.style.background='#d1caca'" 
+                    onmouseout="this.style.background='#e4e4e4';" (click)="openDialog()" data-i18n="">Génerer rapport</div>
 
                     <div id="dvContainer"></div>
                     
@@ -197,15 +215,15 @@
             </div> 
       </div>
       <div id="ngeo">
-      <div id="dropRegion" class="form-group" style="visibility: hidden  ">
+  <!--   <div id="dropRegion" class="form-group" style="display: none  ">
           <select class="form-control" (change)="p($event.target.value)" id="exampleFormControlSelect1">
                 <option  disabled="disabled">Régions</option>
                 <option *ngFor="let option of list_Regions; index as i"
                 [value]="option.code_region" >{{ option.nomR }}</option>
           </select>
-      </div>
+      </div>-->
       <div   class="form-group">
-          <select class="form-control" (change)="test($event.target.value)" id="exampleFormControlSelect1">
+          <select class="form-control" (change)="ShowHidden($event.target.value)" id="exampleFormControlSelect1">
                 <option  disabled="disabled">Niveau geographique</option>
            
             <option>région</option>
@@ -225,22 +243,22 @@
     </div>
       <div id="down">
         <div id="small">
-            <div class="col-lg-6 col-sm-6 right-s" style="text-align: center">
-            la table
+            <div class="col-lg-6 col-sm-6 right-s" style="text-align: center;font-weight: bold;">
+            Table Indicateurs
             </div>
-            <div class="col-lg-6 col-sm-6 left-s" style="text-align: center">
-            Le diagramme
+            <div class="col-lg-6 col-sm-6 left-s" style="text-align: center; font-weight: bold; ">
+            Diagramme Indicateurs
             </div>
         </div>
         <div id="long">
           <div class="container">
               <div class="row">
                   <div class="col-lg-6 col-sm-6 right">
-                      <div class="example-header" style="text-align: center">
+                      <div class="example-header" style="text-align: center; ">
                           <mat-form-field  floatLabel="never">
                             <input matInput (keyup)="applyFilter($event.target.value)"autocomplete="off"  placeholder="Filter">
                                </mat-form-field>
-                               <button class="btn btn-primary" color="primary" (click)="ExportTOExcel()">Export as Excel</button>
+                               <button class="btn" color="primary" (click)="ExportTOExcel()">Export as Excel</button>
                        
                         </div>
                    <div  #TABLE>
@@ -269,14 +287,19 @@
         
            
             <div id="solid">Sélectionnez un indicateur</div>
-            <div id='graph-container'>
-            <canvas id="myChart" ></canvas></div>
+            <div   id='graph-container'>
+            <canvas id="myChart" ></canvas>
+        </div>
         
             </div>
         
             </div></div>
           </div>
       </div>
+    </div>
+
+    <div id="tab" style="display: none">
+
     </div>
      
     

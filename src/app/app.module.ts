@@ -6,22 +6,29 @@ import { AppRoutingModule,routingcomponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MapService } from './shared/map.service';
 import { HttpClientModule } from "@angular/common/http";
-import { MapComponent, RapportMatDialogue } from './map/map.component';
+import { MapComponent, RapportMatDialogue,histogrammefrequence } from './map/map.component';
+
 import { ChartModule } from 'angular-highcharts';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { DesscritisationPdfComponent } from './desscritisation-pdf/desscritisation-pdf.component';
+
 @NgModule({
   declarations: [
+histogrammefrequence,
    RapportMatDialogue,
     AppComponent,
      MapComponent,
     routingcomponents,
+    DesscritisationPdfComponent,
    
       
   ],
-  entryComponents: [RapportMatDialogue],
+  entryComponents: [RapportMatDialogue,histogrammefrequence],
   imports: [
+    PdfViewerModule,
     MatDialogModule,
     BrowserAnimationsModule,
     BrowserModule,

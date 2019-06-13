@@ -33,6 +33,10 @@ export class MapService {
     return this.http.get<Observable<any>>(this.rootURL + 'Valeur/Regions');
   }
 
+  getThemes(): Observable<any> {
+    return this.http.get<Observable<any>>(this.rootURL + 'Indicateur/Themes');
+  }
+
   public getJSON(): Observable<any> {
     return this.http.get("./assets/communej.json");
 }
@@ -84,6 +88,9 @@ public getJSONRegions(): Observable<any> {
   }
   getOnlyValuesByNomIndicateurRegions(nom): Observable<any> {
     return this.http.get<Observable<any>>(this.rootURL + 'ValeurReg/OnlyValues/'+nom);
+  }
+  getPdf(): Observable<any>{
+return this.http.get<Observable<any>>(this.rootURL + 'Pdf');
   }
 
   
