@@ -31,7 +31,7 @@
     "font-awesome": "^4.7.0",
     "highcharts": "^7.0.3",
     "install": "^0.12.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "leaflet-easyprint": "^2.1.9",
     "leaflet-image": "^0.4.0",
     "ng2-pdf-viewer": "^5.2.4",
