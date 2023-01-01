@@ -34,7 +34,7 @@
     "jquery": "^3.4.1",
     "leaflet-easyprint": "^2.1.9",
     "leaflet-image": "^0.4.0",
-    "ng2-pdf-viewer": "^5.2.4",
+    "ng2-pdf-viewer": "^5.3.4",
     "requirejs": "^2.3.6",
     "rxjs": "~6.3.3",
     "tslib": "^1.9.0",
@@ -42,7 +42,7 @@
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.13.8",
+    "@angular-devkit/build-angular": "^15.0.4",
     "@angular/cli": "~7.2.1",
     "@angular/compiler-cli": "~7.2.0",
     "@angular/language-service": "~7.2.0",
